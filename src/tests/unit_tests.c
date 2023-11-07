@@ -7,9 +7,11 @@
 int main() {
   Suite *s_memchr = make_s21_memchr_suite();
   Suite *s_memcpy = make_s21_memcpy_suite();
+  Suite *s_memcmp = make_s21_memcmp_suite();
 
   SRunner *runner = srunner_create(s_memchr);
   srunner_add_suite(runner, s_memcpy);
+  srunner_add_suite(runner, s_memcmp);
 
   srunner_run_all(runner, CK_NORMAL);
   int failed = srunner_ntests_failed(runner);

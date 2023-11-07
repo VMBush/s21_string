@@ -8,8 +8,7 @@ int s21_memcmp(const void *str1, const void *str2, s21_size_t n) {
   int flag = 0;
   while (n--) {
     if (*ch1 != *ch2) {
-      flag = (*ch1 - *ch2);
-      ;
+      flag = (*ch1) - (*ch2);
       break;
     }
     ch1++;
