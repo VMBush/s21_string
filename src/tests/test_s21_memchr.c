@@ -5,9 +5,7 @@
 #include "unit_tests.h"
 #define CK_FORK no
 
-START_TEST(test_s21_memchr) {
-  ck_assert_int_eq(1, 1);
-}
+START_TEST(test_s21_memchr) { ck_assert_int_eq(1, 1); }
 END_TEST
 
 Suite* make_s21_memchr_suite(void) {
