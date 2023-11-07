@@ -5,5 +5,6 @@
 Suite* make_s21_memchr_suite(void);
 Suite* make_s21_memcpy_suite(void);
 Suite* make_s21_memcmp_suite(void);
+Suite* make_s21_memset_suite(void);
 
 #endif
