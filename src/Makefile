@@ -7,5 +7,10 @@ TEST_SOURCES = ./tests/*.c ./*.c
 all:
 	gcc *.c
 
-test:
+test :
 	$(CC) $(FLAGS) $(TEST_SOURCES) -o test $(TST_LIBS)
+
+runTest : 
+	-rm ./test
+	$(CC) $(FLAGS) $(TEST_SOURCES) -o test $(TST_LIBS)
+	./test
