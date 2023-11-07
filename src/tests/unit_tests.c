@@ -5,11 +5,11 @@
 #include <stdlib.h>
 
 int main() {
-  Suite *s21_memchr = make_s21_memchr_suite();
-  // Suite *s21_other = make_s21_other_suite();
+  Suite *s_memchr = make_s21_memchr_suite();
+  Suite *s_memcpy = make_s21_memcpy_suite();
 
-  SRunner *runner = srunner_create(s21_memchr);
-  // srunner_add_suite(runner, s21_other);
+  SRunner *runner = srunner_create(s_memchr);
+  srunner_add_suite(runner, s_memcpy);
 
   srunner_run_all(runner, CK_NORMAL);
   int failed = srunner_ntests_failed(runner);
