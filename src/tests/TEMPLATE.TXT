@@ -1,0 +1,21 @@
+#include <check.h>
+#include <string.h>
+
+#include "../s21_string.h"
+#include "unit_tests.h"
+#define CK_FORK no
+
+START_TEST(test_s21_???) {
+///////////////////////////////
+}
+END_TEST
+
+Suite* make_s21_???_suite(void) {
+  Suite* s = suite_create("s21_???");
+  TCase* tc = tcase_create("s21_???");
+
+  tcase_add_test(tc, test_s21_???);
+
+  suite_add_tcase(s, tc);
+  return s;
+}
