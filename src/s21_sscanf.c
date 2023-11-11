@@ -1,8 +1,6 @@
 
 #include "s21_string.h"
 
-// error 0 если не удалось считать
-
 struct PatternVec patternVecInit() {
   struct PatternVec vec = {0, 0, 5, malloc(5 * sizeof(struct Pattern))};
   return vec;
@@ -22,20 +20,22 @@ void patternVecDel(struct PatternVec vec) { free(vec.data); }
 
 int s21_sscanf(const char* str, const char* format, ...) {
   int err = 0;
-  int cntr = 0;
+  int succ_cntr = 0;
   va_list dest;
   va_start(dest, format);
 
   struct PatternVec patterns = patternVecInit();
-  //просканировать паттерны
+  // просканировать паттерны
   getPatterns(&patterns, format);
+  // считать данные по паттернам
+  const char* str_start = str;
   for (int i = 0; i < patterns.size && err == 0; i++) {
-    scanPattern(&str, patterns.data[i], dest, &cntr, &err);
+    scanPattern(&str, patterns.data[i], dest, &succ_cntr, str_start, &err);
   }
 
   va_end(dest);
   patternVecDel(patterns);
-  return cntr;
+  return succ_cntr;
 }
 
 void getPatterns(struct PatternVec* patterns, const char* format) {
@@ -94,8 +94,38 @@ void getPatterns(struct PatternVec* patterns, const char* format) {
 
 // Считывает один паттерн, двигая указатель
 void scanPattern(const char** str, struct Pattern pattern, va_list dest,
-                 int* succ_cntr, int* err) {
-  int i = 0;
+                 int* succ_cntr, const char* str_start, int* err) {
+  if (!pattern.isChar && pattern.sym == 'n') {
+    *va_arg(dest, int*) = *str - str_start;
+    return;
+  }
+
+  // обрабатываем простой символ
+  if (pattern.isChar) {
+    // обрабатываем пропуск символов при пробев
+    if (pattern.sym == ' ') {
+      while (**str == ' ') {
+        (*str)++;
+      }
+    } else if (pattern.sym == **str) {
+      *str = *str + 1;
+    } else {
+      *err = 1;
+    }
+  } else {
+    switch (pattern.sym) {  // cdieEfgGosuxXp
+      case '%':
+        if (**str == '%') {
+          *str++;
+          //(*succ_cntr)++; Нет
+        }
+        break;
+      case 'n':
+        *va_arg(dest, int*) = *str - str_start;
+        //(*succ_cntr)++; Нет
+        break;
+    }
+  }
 }
 
 void scanInt(const char** str, struct Pattern pattern, int* dest) {}
