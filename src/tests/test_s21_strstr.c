@@ -41,7 +41,6 @@ START_TEST(test_s21_strstr_test_4) {
   ck_assert_ptr_eq(result, expected);
 }
 
-
 Suite* make_s21_strstr_suite(void) {
   Suite* s = suite_create("s21_strstr");
   TCase* tc = tcase_create("s21_strstr");

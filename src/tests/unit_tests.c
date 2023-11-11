@@ -30,7 +30,6 @@ int main() {
   srunner_add_suite(runner, s_strchr);
   srunner_add_suite(runner, s_strstr);
   srunner_add_suite(runner, s_strcpy);
-  
 
   srunner_run_all(runner, CK_NORMAL);
   int failed = srunner_ntests_failed(runner);
