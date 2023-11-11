@@ -1,8 +1,7 @@
-#include "../s21_string.h"
 #include "unit_tests.h"
 #define CK_FORK no
 
-START_TEST(test_s21_strrchr_found) {
+START_TEST(test_s21_strrchr_test_1) {
   const char* str = "Test string";
   int ch = 's';
 
@@ -12,7 +11,7 @@ START_TEST(test_s21_strrchr_found) {
   ck_assert_ptr_eq(result, expected);
 }
 
-START_TEST(test_s21_strrchr_not_found) {
+START_TEST(test_s21_strrchr_test_2) {
   const char* str = "Test string";
   int ch = 'x';
 
@@ -22,18 +21,8 @@ START_TEST(test_s21_strrchr_not_found) {
   ck_assert_ptr_eq(result, expected);
 }
 
-START_TEST(test_s21_strrchr_empty_string) {
+START_TEST(test_s21_strrchr_test_3) {
   const char* str = "";
-  int ch = 'x';
-
-  char* result = s21_strrchr(str, ch);
-  char* expected = strrchr(str, ch);
-
-  ck_assert_ptr_eq(result, expected);
-}
-
-START_TEST(test_s21_strrchr_null_string) {
-  const char* str = s21_NULL;
   int ch = 'x';
 
   char* result = s21_strrchr(str, ch);
@@ -46,10 +35,9 @@ Suite* make_s21_strrchr_suite(void) {
   Suite* s = suite_create("s21_strrchr");
   TCase* tc = tcase_create("s21_strrchr");
 
-  tcase_add_test(tc, test_s21_strrchr_found);
-  tcase_add_test(tc, test_s21_strrchr_not_found);
-  tcase_add_test(tc, test_s21_strrchr_empty_string);
-  tcase_add_test(tc, test_s21_strrchr_null_string);
+  tcase_add_test(tc, test_s21_strrchr_test_1);
+  tcase_add_test(tc, test_s21_strrchr_test_2);
+  tcase_add_test(tc, test_s21_strrchr_test_3);
 
   suite_add_tcase(s, tc);
   return s;

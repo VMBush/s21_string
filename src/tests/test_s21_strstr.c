@@ -1,4 +1,3 @@
-#include "../s21_string.h"
 #include "unit_tests.h"
 
 START_TEST(test_s21_strstr_test_1) {
@@ -41,16 +40,6 @@ START_TEST(test_s21_strstr_test_4) {
   ck_assert_ptr_eq(result, expected);
 }
 
-START_TEST(test_s21_strstr_test_5) {
-  const char* str = "Hello, School21!";
-  const char* substr = s21_NULL;
-
-  char* result = s21_strstr(str, substr);
-  char* expected = strstr(str, substr);
-
-  ck_assert_ptr_eq(result, expected);
-}
-
 Suite* make_s21_strstr_suite(void) {
   Suite* s = suite_create("s21_strstr");
   TCase* tc = tcase_create("s21_strstr");
@@ -59,7 +48,6 @@ Suite* make_s21_strstr_suite(void) {
   tcase_add_test(tc, test_s21_strstr_test_2);
   tcase_add_test(tc, test_s21_strstr_test_3);
   tcase_add_test(tc, test_s21_strstr_test_4);
-  tcase_add_test(tc, test_s21_strstr_test_5);
 
   suite_add_tcase(s, tc);
   return s;

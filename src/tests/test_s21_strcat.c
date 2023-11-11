@@ -1,5 +1,5 @@
-#include "../s21_string.h"
 #include "unit_tests.h"
+#define CK_FORK no
 
 START_TEST(test_s21_strcat_test_1) {
   char str1[20] = "Hello, ";
