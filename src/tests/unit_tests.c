@@ -10,12 +10,25 @@ int main() {
   Suite *s_memcmp = make_s21_memcmp_suite();
   // Suite *s_memset = make_s21_memset_suite();
   Suite *s_strtok = make_s21_strtok_suite();
+  Suite *s_strspn = make_s21_strspn_suite();
+  Suite *s_strrchr = make_s21_strrchr_suite();
+  Suite *s_strcat = make_s21_strcat_suite();
+  Suite *s_strlen = make_s21_strlen_suite();
+  Suite *s_strchr = make_s21_strchr_suite();
+  Suite *s_strstr = make_s21_strstr_suite();
 
   SRunner *runner = srunner_create(s_memchr);
   srunner_add_suite(runner, s_memcpy);
   srunner_add_suite(runner, s_memcmp);
   // srunner_add_suite(runner, s_memset);
   srunner_add_suite(runner, s_strtok);
+  srunner_add_suite(runner, s_strspn);
+  srunner_add_suite(runner, s_strrchr);
+  srunner_add_suite(runner, s_strcat);
+  srunner_add_suite(runner, s_strlen);
+  srunner_add_suite(runner, s_strchr);
+  srunner_add_suite(runner, s_strstr);
+  
 
   srunner_run_all(runner, CK_NORMAL);
   int failed = srunner_ntests_failed(runner);
