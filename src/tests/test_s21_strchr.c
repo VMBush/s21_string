@@ -32,7 +32,6 @@ START_TEST(test_s21_strchr_test_3) {
   ck_assert_ptr_eq(result, expected);
 }
 
-
 Suite* make_s21_strchr_suite(void) {
   Suite* s = suite_create("s21_strchr");
   TCase* tc = tcase_create("s21_strchr");
@@ -40,7 +39,6 @@ Suite* make_s21_strchr_suite(void) {
   tcase_add_test(tc, test_s21_strchr_test1);
   tcase_add_test(tc, test_s21_strchr_test_2);
   tcase_add_test(tc, test_s21_strchr_test_3);
-
 
   suite_add_tcase(s, tc);
   return s;

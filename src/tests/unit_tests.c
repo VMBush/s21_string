@@ -17,6 +17,8 @@ int main() {
   Suite *s_strchr = make_s21_strchr_suite();
   Suite *s_strstr = make_s21_strstr_suite();
   Suite *s_strcpy = make_s21_strcpy_suite();
+  Suite *s_strcmp = make_s21_strcmp_suite();
+  Suite *s_strcspn = make_s21_strcspn_suite();
   Suite *s_strncmp = make_s21_strncmp ();
 
   SRunner *runner = srunner_create(s_memchr);
@@ -31,7 +33,6 @@ int main() {
   srunner_add_suite(runner, s_strchr);
   srunner_add_suite(runner, s_strstr);
   srunner_add_suite(runner, s_strcpy);
-  srunner_add_suite(runner, s_strncmp);
   
 
   srunner_run_all(runner, CK_NORMAL);

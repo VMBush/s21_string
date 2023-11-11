@@ -2,7 +2,6 @@
 #include "unit_tests.h"
 #define CK_FORK no
 
-
 START_TEST(test_s21_strcpy_test_1) {
   char dest[20] = "test";
   const char* src = "Test copy";
@@ -44,4 +43,3 @@ Suite* make_s21_strcpy_suite(void) {
   suite_add_tcase(s, tc);
   return s;
 }
-
