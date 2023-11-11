@@ -2,7 +2,6 @@
 
 #include "s21_string.h"
 
-
 char *s21_strtok(char *str, const char *delim) {
   static char *token = s21_NULL;
   if (str != s21_NULL)

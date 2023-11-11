@@ -1,9 +1,13 @@
 #include "s21_string.h"
 
-s21_size_t s21_strcspn(const char *str1, const char *str2){
-    s21_size_t i = 0;
-    while (str1[i] != '\0' && s21_strchr(str2, str1[i]) == s21_NULL){
-        i++;
+
+size_t s21_strcspn(const char *str1, const char *str2) {
+    const char *result = s21_strpbrk(str1, str2);
+
+    if (result == NULL) {
+        return s21_strlen(str1);
     }
-    return i;
+    size_t final_result = result - str1;
+
+    return final_result;
 }
