@@ -1,6 +1,5 @@
 #include "unit_tests.h"
 
-#include <check.h>
 #include <stdio.h>
 #include <stdlib.h>
 

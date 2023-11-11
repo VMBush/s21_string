@@ -1,4 +1,3 @@
-#include "../s21_string.h"
 #include "unit_tests.h"
 #define CK_FORK no
 
