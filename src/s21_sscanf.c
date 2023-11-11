@@ -41,9 +41,6 @@ int s21_sscanf(const char* str, const char* format, ...) {
 void getPatterns(struct PatternVec* patterns, const char* format) {
   // пропускаем пробелы
   while (1) {
-    while (*format == ' ') {
-      format++;
-    }
     // обрабатываем конец строки
     if (*format == '\0') {
       break;
@@ -95,14 +92,9 @@ void getPatterns(struct PatternVec* patterns, const char* format) {
 // Считывает один паттерн, двигая указатель
 void scanPattern(const char** str, struct Pattern pattern, va_list dest,
                  int* succ_cntr, const char* str_start, int* err) {
-  if (!pattern.isChar && pattern.sym == 'n') {
-    *va_arg(dest, int*) = *str - str_start;
-    return;
-  }
-
   // обрабатываем простой символ
   if (pattern.isChar) {
-    // обрабатываем пропуск символов при пробев
+    // обрабатываем пропуск символов при пробеле
     if (pattern.sym == ' ') {
       while (**str == ' ') {
         (*str)++;
@@ -112,7 +104,18 @@ void scanPattern(const char** str, struct Pattern pattern, va_list dest,
     } else {
       *err = 1;
     }
+
+    //обрабатываем спецификаторы
   } else {
+    //спецификаторы до пробела
+    if (pattern.sym == 'n') {
+      *va_arg(dest, int*) = *str - str_start;
+    }
+
+    while (**str == ' ') {
+      (*str)++;
+    }
+    //спецификаторы после пробела
     switch (pattern.sym) {  // cdieEfgGosuxXp
       case '%':
         if (**str == '%') {
@@ -120,10 +123,9 @@ void scanPattern(const char** str, struct Pattern pattern, va_list dest,
           //(*succ_cntr)++; Нет
         }
         break;
-      case 'n':
-        *va_arg(dest, int*) = *str - str_start;
-        //(*succ_cntr)++; Нет
-        break;
+
+      // case 'p': Тупа сканим шестнадцатеричку
+      //   if ()
     }
   }
 }
