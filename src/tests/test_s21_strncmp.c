@@ -52,7 +52,7 @@ START_TEST (test_s21_strncmp_test_5){
 }
 END_TEST
 
-Suite *make_s21_strncmp (void){
+Suite *make_s21_strncmp_suite (void){
     Suite* s = suite_create("s21_strncmp");
     TCase* tc = tcase_create ("s21_strncmp");
 

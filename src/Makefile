@@ -10,7 +10,10 @@ all:
 test :
 	$(CC) $(FLAGS) $(TEST_SOURCES) -o test $(TST_LIBS)
 
-runTest : 
+test : 
 	-rm ./test
 	$(CC) $(FLAGS) $(TEST_SOURCES) -o test $(TST_LIBS)
 	./test
+
+clean:
+	rm test
