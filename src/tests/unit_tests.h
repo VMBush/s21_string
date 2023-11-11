@@ -13,5 +13,6 @@ Suite* make_s21_strcat_suite(void);
 Suite* make_s21_strlen_suite(void);
 Suite* make_s21_strchr_suite(void);
 Suite* make_s21_strstr_suite(void);
+Suite* make_s21_strcpy_suite(void);
 
 #endif
