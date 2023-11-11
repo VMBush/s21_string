@@ -32,7 +32,7 @@ int s21_sscanf(const char* str, const char* format, ...) {
   for (int i = 0; i < patterns.size && err == 0; i++) {
     scanPattern(&str, patterns.data[i], dest, &cntr, &err);
   }
-  
+
   va_end(dest);
   patternVecDel(patterns);
   return cntr;
@@ -93,8 +93,8 @@ void getPatterns(struct PatternVec* patterns, const char* format) {
 }
 
 // Считывает один паттерн, двигая указатель
-void scanPattern(const char** str, struct Pattern pattern, va_list dest, int* succ_cntr,
-                 int* err) {
+void scanPattern(const char** str, struct Pattern pattern, va_list dest,
+                 int* succ_cntr, int* err) {
   int i = 0;
 }
 
