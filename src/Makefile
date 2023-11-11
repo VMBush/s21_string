@@ -1,6 +1,6 @@
 CC = gcc
 FLAGS = -Werror -Wextra -Wall -g
-TST_LIBS = $(shell pkg-config --libs check)
+TST_LIBS = $(shell pkg-config --libs check) #-lcheck -I/usr/local/include
 
 TEST_SOURCES = ./tests/*.c ./*.c
 
