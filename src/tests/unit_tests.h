@@ -10,6 +10,6 @@ Suite* make_s21_strtok_suite(void);
 Suite* make_s21_strspn_suite(void);
 Suite* make_s21_strrchr_suite(void);
 Suite* make_s21_strcat_suite(void);
-
+Suite* make_s21_strlen_suite(void);
 
 #endif

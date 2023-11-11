@@ -5,7 +5,7 @@
 START_TEST(test_s21_strspn_matching_characters) {
   const char* str1 = "abcde";
   const char* str2 = "abc";
-  
+
   size_t result = s21_strspn(str1, str2);
   size_t expected = strspn(str1, str2);
 
@@ -15,7 +15,7 @@ START_TEST(test_s21_strspn_matching_characters) {
 START_TEST(test_s21_strspn_no_matching_characters) {
   const char* str1 = "abcde";
   const char* str2 = "xyz";
-  
+
   size_t result = s21_strspn(str1, str2);
   size_t expected = strspn(str1, str2);
 
@@ -25,7 +25,7 @@ START_TEST(test_s21_strspn_no_matching_characters) {
 START_TEST(test_s21_strspn_empty_str1) {
   const char* str1 = "";
   const char* str2 = "xyz";
-  
+
   size_t result = s21_strspn(str1, str2);
   size_t expected = strspn(str1, str2);
 
@@ -35,7 +35,7 @@ START_TEST(test_s21_strspn_empty_str1) {
 START_TEST(test_s21_strspn_empty_str2) {
   const char* str1 = "abcde";
   const char* str2 = "";
-  
+
   size_t result = s21_strspn(str1, str2);
   size_t expected = strspn(str1, str2);
 

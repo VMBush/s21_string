@@ -1,7 +1,6 @@
-#include "../s21_string.h"  
+#include "../s21_string.h"
 #include "unit_tests.h"
 #define CK_FORK no
-
 
 START_TEST(test_s21_strrchr_found) {
   const char* str = "Test string";

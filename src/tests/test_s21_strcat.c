@@ -4,7 +4,7 @@
 START_TEST(test_s21_strcat_test_1) {
   char str1[20] = "Hello, ";
   const char* str2 = "Kitti!";
-  
+
   char* result = s21_strcat(str1, str2);
   char* expected = strcat(str1, str2);
 
@@ -14,7 +14,7 @@ START_TEST(test_s21_strcat_test_1) {
 START_TEST(test_s21_strcat_test_2) {
   char str1[20] = "";
   const char* str2 = "Kitti!";
-  
+
   char* result = s21_strcat(str1, str2);
   char* expected = strcat(str1, str2);
 
@@ -24,7 +24,7 @@ START_TEST(test_s21_strcat_test_2) {
 START_TEST(test_s21_strcat_test_3) {
   char str1[20] = "Hello, ";
   const char* str2 = "";
-  
+
   char* result = s21_strcat(str1, str2);
   char* expected = strcat(str1, str2);
 
@@ -34,7 +34,7 @@ START_TEST(test_s21_strcat_test_3) {
 START_TEST(test_s21_strcat_test_4) {
   char str1[20] = "";
   const char* str2 = "";
-  
+
   char* result = s21_strcat(str1, str2);
   char* expected = strcat(str1, str2);
 
