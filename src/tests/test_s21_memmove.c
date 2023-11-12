@@ -1,4 +1,5 @@
 #include "unit_tests.h"
+
 #define CK_FORK no
 
 START_TEST(test_s21_memmove_test_1){
@@ -8,8 +9,7 @@ START_TEST(test_s21_memmove_test_1){
     strcpy(str, "Hello, School21!");
     char* expected = memmove(str+5, str, n);
     ck_assert_ptr_eq(result, expected);
-} 
-END_TEST
+}END_TEST
 
 START_TEST(test_s21_memmove_test_2){
     const char str[17] = "Hello, School21!";
@@ -19,8 +19,7 @@ START_TEST(test_s21_memmove_test_2){
     strcpy(str2, "Hello, School21!");
     char* expected = memmove(str2, str, n);
     ck_assert_ptr_eq(result, expected);
-} 
-END_TEST
+}END_TEST
 
 START_TEST(test_s21_memmove_test_3){
     char str[17] = "";
@@ -29,8 +28,7 @@ START_TEST(test_s21_memmove_test_3){
     strcpy(str, "");
     char* expected = memmove(str+5, str, n);
     ck_assert_ptr_eq(result, expected);
-} 
-END_TEST
+}END_TEST
 
 Suite *make_s21_memmove_suite (void){
     Suite* s = suite_create("s21_memmove");

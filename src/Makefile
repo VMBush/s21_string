@@ -35,7 +35,7 @@ s21_string.a:
 	$(CC) $(FLAGS) -c s21_strstr.c -o s21_strstr.o
 	$(CC) $(FLAGS) -c s21_strtok.c -o s21_strtok.o
 	$(CC) $(FLAGS) -c s21_strerror.c -o s21_strerror.o
-	# $(CC) $(FLAGS) -c s21_strncat.c -o s21_strncat.o
+	$(CC) $(FLAGS) -c s21_strncat.c -o s21_strncat.o
 	ar rcs s21_string.a s21_str*.o s21_mem*.o
 
 clean:

@@ -1,6 +1,7 @@
 #include "s21_string.h"
 
 #if defined(__APPLE__)
+#define flag 0
 #define MAX_ERRLIST 107
 #define ERROR "Unknown error: "
 
@@ -113,6 +114,7 @@ char* maserror[] = {"Undefined error: 0",
                     "Interface output queue is full"};
 
 #elif defined(__linux__)
+#define flag 1
 #define MAX_ERRLIST 134
 #define ERROR "Unknown error "
 
@@ -255,12 +257,18 @@ char* maserror[] = {"Success",
 char* s21_strerror(int errnum) {
   char** ERRORS = maserror;
   char* error = s21_NULL;
-  char buf[100];
+  static char buf[100];
   if (errnum >= 0 && errnum < MAX_ERRLIST) {
     error = ERRORS[errnum];
   } else {
-    char* undef = "Unknown error ";
-    sprintf(buf, "%s%d", undef, errnum);
+    if (flag == 0){
+      char* undef = "Unknown error: ";
+      sprintf(buf, "%s%d", undef, errnum);
+    }
+    else if (flag == 1){
+      char* undef = "Unknown error ";
+      sprintf(buf, "%s%d", undef, errnum);
+    }
   }
   return error == s21_NULL ? buf : error;
 }
