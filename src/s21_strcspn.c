@@ -1,7 +1,7 @@
 #include "s21_string.h"
 
 
-size_t s21_strcspn(const char *str1, const char *str2) {
+s21_size_t s21_strcspn(const char *str1, const char *str2) {
     const char *result = s21_strpbrk(str1, str2);
 
     if (result == NULL) {
