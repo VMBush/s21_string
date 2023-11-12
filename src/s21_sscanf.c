@@ -105,18 +105,19 @@ void scanPattern(const char** str, struct Pattern pattern, va_list dest,
       *err = 1;
     }
 
-    //обрабатываем спецификаторы
+    // обрабатываем спецификаторы
   } else {
-    //спецификаторы до пробела
+    // спецификаторы до пробела
     if (pattern.sym == 'n') {
       *va_arg(dest, int*) = *str - str_start;
+      //(*succ_cntr)++; Нет
     }
 
     while (**str == ' ') {
       (*str)++;
     }
-    //спецификаторы после пробела
-    switch (pattern.sym) {  // cdieEfgGosuxXp
+    // спецификаторы после пробела
+    switch (pattern.sym) {  // cieEfgGosxXp
       case '%':
         if (**str == '%') {
           *str++;
@@ -124,10 +125,84 @@ void scanPattern(const char** str, struct Pattern pattern, va_list dest,
         }
         break;
 
-      // case 'p': Тупа сканим шестнадцатеричку
-      //   if ()
+      case 'd':
+      case 'u':
+        *err = scanInt(str, pattern, va_arg(dest, void*));
+        *succ_cntr += 1 - *err;
+        break;
+
+      case 'p':
+      case 'x':
+      case 'X':
+        *err = scanHex(str, pattern, va_arg(dest, void*));
+        *succ_cntr += 1 - *err;
+        break;
     }
   }
 }
 
-void scanInt(const char** str, struct Pattern pattern, int* dest) {}
+int scanInt(const char** str, struct Pattern pattern, void* dest) {
+  //   char sym;
+  char sign = '+';
+  // обработка знакового ввода
+  if (s21_strspn(*str, "+-")) {
+    // если считали только знак
+    if (pattern.width == 1) {
+      return 1;
+    }
+    pattern.width -= 1;
+    sign = **str;
+    (*str)++;
+  }
+
+  // сколько символов нужно считать
+  int len = s21_strspn(*str, "0123456789");
+  if (len == 0) {
+    return 1;
+  }
+  if (pattern.width > 0 && pattern.width < len) {
+    len = pattern.width;
+  }
+  long res = 0;
+  unsigned long ures = 0;
+
+  // считывание символов
+  for (int i = 0; i < len; i++) {
+    res *= 10;
+    ures *= 10;
+    res += (*str)[i] - '0';
+    ures += (*str)[i] - '0';
+  }
+
+*str += len;
+
+
+  if (sign == '-') {
+    res *= -1;
+  }
+
+  // возвращение результата
+  if (pattern.sym == 'd') {
+    if (pattern.lengh == 'h') {
+      *(short*)dest = (short)res;
+    } else if (pattern.lengh == 'l') {
+      *(long*)dest = res;
+    } else {
+      *(int*)dest = (int)res;
+    }
+  } else if (pattern.sym == 'u') {
+    if (pattern.lengh == 'h') {
+      *(unsigned short*)dest = (unsigned short)ures;
+    } else if (pattern.lengh == 'l') {
+      *(unsigned long*)dest = ures;
+    } else {
+      *(unsigned int*)dest = (unsigned int)ures;
+    }
+  }
+
+  return 0;
+}
+
+// Если считываем хекс, записываем инт, если указатель, то преобразуем инт в
+// (void*)
+int scanHex(const char** str, struct Pattern pattern, void* dest) {}
