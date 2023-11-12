@@ -20,6 +20,7 @@ void patternVecDel(struct PatternVec vec) { free(vec.data); }
 
 int s21_sscanf(const char* str, const char* format, ...) {
   int err = 0;
+  printf("sabale");
   int succ_cntr = 0;
   va_list dest;
   va_start(dest, format);
@@ -142,7 +143,6 @@ void scanPattern(const char** str, struct Pattern pattern, va_list dest,
 }
 
 int scanInt(const char** str, struct Pattern pattern, void* dest) {
-  //   char sym;
   char sign = '+';
   // обработка знакового ввода
   if (s21_strspn(*str, "+-")) {
@@ -163,19 +163,15 @@ int scanInt(const char** str, struct Pattern pattern, void* dest) {
   if (pattern.width > 0 && pattern.width < len) {
     len = pattern.width;
   }
-  long res = 0;
-  unsigned long ures = 0;
+  long long res = 0;
 
   // считывание символов
   for (int i = 0; i < len; i++) {
     res *= 10;
-    ures *= 10;
     res += (*str)[i] - '0';
-    ures += (*str)[i] - '0';
   }
 
-*str += len;
-
+  *str += len;
 
   if (sign == '-') {
     res *= -1;
@@ -192,11 +188,11 @@ int scanInt(const char** str, struct Pattern pattern, void* dest) {
     }
   } else if (pattern.sym == 'u') {
     if (pattern.lengh == 'h') {
-      *(unsigned short*)dest = (unsigned short)ures;
+      *(unsigned short*)dest = (unsigned short)res;
     } else if (pattern.lengh == 'l') {
-      *(unsigned long*)dest = ures;
+      *(unsigned long*)dest = res;
     } else {
-      *(unsigned int*)dest = (unsigned int)ures;
+      *(unsigned int*)dest = (unsigned int)res;
     }
   }
 
@@ -205,4 +201,74 @@ int scanInt(const char** str, struct Pattern pattern, void* dest) {
 
 // Если считываем хекс, записываем инт, если указатель, то преобразуем инт в
 // (void*)
-int scanHex(const char** str, struct Pattern pattern, void* dest) {}
+int scanHex(const char** str, struct Pattern pattern, void* dest) {
+  char sign = '+';
+  // обработка знакового ввода
+  if (s21_strspn(*str, "+-")) {
+    // если считали только знак
+    if (pattern.width == 1) {
+      return 1;
+    }
+    pattern.width -= 1;
+    sign = **str;
+    (*str)++;
+  }
+
+  // обрабатываем начало даты на 0х, а также на конец даты в том же месте
+  if (!s21_strncmp(*str, "0x", 2)) {
+    if (pattern.width == 1 || pattern.width == 2) {
+      *(int*)dest = 0;
+      (*str) += pattern.width;
+      return 0;
+    }
+
+    pattern.width -= 2;
+    *str += 2;
+  }
+
+  // сколько символов нужно считать
+  int len = s21_strspn(*str, "0123456789abcdefABCDEF");
+  if (len == 0) {
+    return 1;
+  }
+  if (pattern.width > 0 && pattern.width < len) {
+    len = pattern.width;
+  }
+  long long res = 0;
+
+  char* lower_str = malloc(len * sizeof(char) + 1);
+  s21_strncpy(lower_str, str, len);
+
+  // считывание символов
+  for (int i = 0; i < len; i++) {
+    res *= 10;
+    res += (*str)[i] - '0';
+  }
+
+  *str += len;
+
+  if (sign == '-') {
+    res *= -1;
+  }
+
+  // возвращение результата
+  if (pattern.sym == 'd') {
+    if (pattern.lengh == 'h') {
+      *(short*)dest = (short)res;
+    } else if (pattern.lengh == 'l') {
+      *(long*)dest = res;
+    } else {
+      *(int*)dest = (int)res;
+    }
+  } else if (pattern.sym == 'u') {
+    if (pattern.lengh == 'h') {
+      *(unsigned short*)dest = (unsigned short)res;
+    } else if (pattern.lengh == 'l') {
+      *(unsigned long*)dest = res;
+    } else {
+      *(unsigned int*)dest = (unsigned int)res;
+    }
+  }
+
+  return 0;
+}
