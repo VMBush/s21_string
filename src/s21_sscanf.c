@@ -20,7 +20,6 @@ void patternVecDel(struct PatternVec vec) { free(vec.data); }
 
 int s21_sscanf(const char* str, const char* format, ...) {
   int err = 0;
-  printf("sabale");
   int succ_cntr = 0;
   va_list dest;
   va_start(dest, format);
@@ -118,7 +117,7 @@ void scanPattern(const char** str, struct Pattern pattern, va_list dest,
       (*str)++;
     }
     // спецификаторы после пробела
-    switch (pattern.sym) {  // cieEfgGosxXp
+    switch (pattern.sym) {  // cieEfgGos
       case '%':
         if (**str == '%') {
           *str++;
@@ -215,7 +214,9 @@ int scanHex(const char** str, struct Pattern pattern, void* dest) {
   }
 
   // обрабатываем начало даты на 0х, а также на конец даты в том же месте
+  int prrefix = 0;
   if (!s21_strncmp(*str, "0x", 2)) {
+    prrefix = 1;
     if (pattern.width == 1 || pattern.width == 2) {
       *(int*)dest = 0;
       (*str) += pattern.width;
@@ -229,6 +230,15 @@ int scanHex(const char** str, struct Pattern pattern, void* dest) {
   // сколько символов нужно считать
   int len = s21_strspn(*str, "0123456789abcdefABCDEF");
   if (len == 0) {
+    if (prrefix == 1) {
+      if (pattern.sym == 'p') {
+        *(void**)dest = (void*)0;
+        return 0;
+      } else {
+        *(int*)dest = 0;
+        return 0;
+      }
+    }
     return 1;
   }
   if (pattern.width > 0 && pattern.width < len) {
@@ -236,14 +246,23 @@ int scanHex(const char** str, struct Pattern pattern, void* dest) {
   }
   long long res = 0;
 
-  char* lower_str = malloc(len * sizeof(char) + 1);
-  s21_strncpy(lower_str, str, len);
+  // понижаем регистр строки
+  char* number_str = malloc((len + 1) * sizeof(char));
+  s21_strncpy(number_str, *str, len);
+  number_str[len] = '\0';
+  char* lower_str = s21_to_lower(number_str);
+  free(number_str);
 
   // считывание символов
   for (int i = 0; i < len; i++) {
-    res *= 10;
-    res += (*str)[i] - '0';
+    res *= 16;
+    if (s21_strchr("1234567890", lower_str[i])) {
+      res += lower_str[i] - '0';
+    } else {
+      res += lower_str[i] - 'a' + 10;
+    }
   }
+  free(lower_str);
 
   *str += len;
 
@@ -252,15 +271,9 @@ int scanHex(const char** str, struct Pattern pattern, void* dest) {
   }
 
   // возвращение результата
-  if (pattern.sym == 'd') {
-    if (pattern.lengh == 'h') {
-      *(short*)dest = (short)res;
-    } else if (pattern.lengh == 'l') {
-      *(long*)dest = res;
-    } else {
-      *(int*)dest = (int)res;
-    }
-  } else if (pattern.sym == 'u') {
+  if (pattern.sym == 'p') {
+    *(void**)dest = (void*)res;
+  } else { // x или X
     if (pattern.lengh == 'h') {
       *(unsigned short*)dest = (unsigned short)res;
     } else if (pattern.lengh == 'l') {
