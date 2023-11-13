@@ -36,6 +36,12 @@ s21_string.a:
 	$(CC) $(FLAGS) -c s21_strtok.c -o s21_strtok.o
 	$(CC) $(FLAGS) -c s21_strerror.c -o s21_strerror.o
 	$(CC) $(FLAGS) -c s21_strncat.c -o s21_strncat.o
+	$(CC) $(FLAGS) -c s21_insert.c -o s21_insert.o
+	$(CC) $(FLAGS) -c s21_to_lower.c -o s21_to_lower.o
+	# $(CC) $(FLAGS) -c s21_to_upper.c -o s21_to_upper.o
+	# $(CC) $(FLAGS) -c s21_trim.c -o s21_trim.o
+	# $(CC) $(FLAGS) -c s21_sprintf.c -o s21_sprintf.o
+	# $(CC) $(FLAGS) -c s21_sscanf.c -o s21_sscanf.o
 	ar rcs s21_string.a s21_str*.o s21_mem*.o
 
 clean:
