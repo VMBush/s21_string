@@ -1,12 +1,12 @@
 #include "s21_string.h"
 
 
-char *s21_strncpy(char *dest, const char *src, size_t n) {
+char *s21_strncpy(char *dest, const char *src, s21_size_t n) {
     // Получаем длину строки src
-    size_t src_len =  s21_strlen(src);
+    s21_size_t src_len =  s21_strlen(src);
 
     // Выбираем, сколько символов копировать
-    size_t copy_len;
+    s21_size_t copy_len;
     if (src_len < n) {
         // Если длина строки src меньше n, копируем src_len символов
         copy_len = src_len;
