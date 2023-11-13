@@ -25,5 +25,6 @@ Suite* make_s21_memmove_suite (void);
 Suite* make_s21_strncpy_suite(void);
 Suite* make_s21_insert_suite (void);
 Suite* make_s21_strerror_suite(void);
+Suite* make_s21_to_lower_suite(void);
 
 #endif

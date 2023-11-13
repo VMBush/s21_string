@@ -2,7 +2,7 @@
 
 void *s21_to_lower(const char *str){
   char *res = s21_NULL;
-  if (str) {
+  if (str != s21_NULL) {
     res = malloc((s21_strlen(str) + 1) * sizeof(char));
     if (res) {
         s21_strcpy(res, str);
