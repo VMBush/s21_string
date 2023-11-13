@@ -1,41 +1,63 @@
 {
-    // Используйте IntelliSense, чтобы узнать о возможных атрибутах.
-    // Наведите указатель мыши, чтобы просмотреть описания существующих атрибутов.
-    // Для получения дополнительной информации посетите: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-      {
-        // MacOS
-        "name": "Launch Program(lldb)",
-        "type": "cppdbg",
-        "request": "launch",
-        "program": "${workspaceRoot}/src/a.out",
-        "args": [],
-        "stopAtEntry": false,
-        "cwd": "${workspaceRoot}",
-        "environment": [],
-        "externalConsole": true,
-        "MIMode": "lldb"
-      },
-      {
-        // Linux
-        "name": "(gdb) Launch",
-        "type": "cppdbg",
-        "request": "launch",
-        "program": "${workspaceRoot}/a.out",
-        "args": ["4", "3", "2", "1"],
-        "stopAtEntry": false,
-        "cwd": "${workspaceRoot}",
-        "environment": [],
-        "externalConsole": true,
-        "MIMode": "gdb",
-        "setupCommands": [
-          {
-            "description": "Enable pretty-printing for gdb",
-            "text": "-enable-pretty-printing",
-            "ignoreFailures": true
-          }
-        ]
-      }
-    ]
-  }
+  // Используйте IntelliSense, чтобы узнать о возможных атрибутах.
+  // Наведите указатель мыши, чтобы просмотреть описания существующих атрибутов.
+  // Для получения дополнительной информации посетите: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      // MacOS
+      "name": "Launch Program(lldb)",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceRoot}/src/a.out",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceRoot}",
+      "environment": [],
+      "externalConsole": true,
+      "MIMode": "lldb"
+    },
+    {
+      "name": "Launch Program (GDB)",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/a.exe", // Имя вашего исполняемого файла
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": true,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "compile_all", // Имя вашей задачи компиляции
+
+      "miDebuggerPath": "D:/SOFT/gcc/bin/gdb.exe" // Укажите путь к вашему GDB
+    },
+    {
+      // Linux
+      "name": "(gdb) Launch",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceRoot}/a.out",
+      "args": ["4", "3", "2", "1"],
+      "stopAtEntry": false,
+      "cwd": "${workspaceRoot}",
+      "environment": [],
+      "externalConsole": true,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
+    }
+  ]
+}
