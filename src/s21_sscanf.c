@@ -117,7 +117,7 @@ void scanPattern(const char** str, struct Pattern pattern, va_list dest,
       (*str)++;
     }
     // спецификаторы после пробела
-    switch (pattern.sym) {  // cieEfgGos
+    switch (pattern.sym) {  // cis
       case '%':
         if (**str == '%') {
           *str++;
@@ -135,6 +135,19 @@ void scanPattern(const char** str, struct Pattern pattern, va_list dest,
       case 'x':
       case 'X':
         *err = scanHex(str, pattern, va_arg(dest, void*));
+        *succ_cntr += 1 - *err;
+        break;
+
+      case 'o':
+        *err = scanOct(str, pattern, va_arg(dest, void*));
+        *succ_cntr += 1 - *err;
+        break;
+      case 'e':
+      case 'E':
+      case 'f':
+      case 'g':
+      case 'G':
+        *err = scanFloat_Sci(str, pattern, va_arg(dest, void*));
         *succ_cntr += 1 - *err;
         break;
     }
@@ -273,7 +286,7 @@ int scanHex(const char** str, struct Pattern pattern, void* dest) {
   // возвращение результата
   if (pattern.sym == 'p') {
     *(void**)dest = (void*)res;
-  } else { // x или X
+  } else {  // x или X
     if (pattern.lengh == 'h') {
       *(unsigned short*)dest = (unsigned short)res;
     } else if (pattern.lengh == 'l') {
@@ -281,6 +294,170 @@ int scanHex(const char** str, struct Pattern pattern, void* dest) {
     } else {
       *(unsigned int*)dest = (unsigned int)res;
     }
+  }
+
+  return 0;
+}
+
+int scanOct(const char** str, struct Pattern pattern, void* dest) {
+  char sign = '+';
+  // обработка знакового ввода
+  if (s21_strspn(*str, "+-")) {
+    // если считали только знак
+    if (pattern.width == 1) {
+      return 1;
+    }
+    pattern.width -= 1;
+    sign = **str;
+    (*str)++;
+  }
+
+  // сколько символов нужно считать
+  int len = s21_strspn(*str, "01234567");
+
+  if (len == 0) {
+    return 1;
+  }
+
+  if (pattern.width > 0 && pattern.width < len) {
+    len = pattern.width;
+  }
+  long long res = 0;
+
+  // считывание символов
+  for (int i = 0; i < len; i++) {
+    res *= 8;
+    res += (*str)[i] - '0';
+  }
+
+  *str += len;
+
+  if (sign == '-') {
+    res *= -1;
+  }
+
+  // возвращение результата
+  if (pattern.lengh == 'h') {
+    *(unsigned short*)dest = (unsigned short)res;
+  } else if (pattern.lengh == 'l') {
+    *(unsigned long*)dest = res;
+  } else {
+    *(unsigned int*)dest = (unsigned int)res;
+  }
+
+  return 0;
+}
+
+int scanFloat_Sci(const char** str, struct Pattern pattern, void* dest) {
+  char sign = '+';
+  // обработка знакового ввода
+  if (s21_strspn(*str, "+-")) {
+    // если считали только знак
+    if (pattern.width == 1) {
+      return 1;
+    }
+    pattern.width -= 1;
+    sign = **str;
+    (*str)++;
+  }
+
+  // сколько символов нужно считать
+  int len = s21_strspn(*str, "0123456789");
+  if (len == 0) {
+    return 1;
+  }
+  if (*(*str + len) == '.') {
+    len += 1 + s21_strspn(*str + len + 1, "0123456789");
+  }
+
+  // считывание части до E
+  struct Pattern forScan = {0, 0, pattern.width, 'L', 'f'};
+  long double res;
+  scanFloat(str, forScan, &res);
+
+  // нужно ли читать дальше
+  if (s21_strspn(*str, "eE") && (pattern.width > len || pattern.width <= 0)) {
+    // обрабатываем предыдущий ввод и е
+    pattern.width = pattern.width - len - 1;
+    (*str)++;
+    // если ширина не закончилась на е
+    if (pattern.width != 0) {
+      long int power = 0;
+      struct Pattern forScanInt = {0, 0, pattern.width, 'l', 'd'};
+      scanInt(str, forScanInt, &power);
+      res *= pow(10, power);
+    }
+  }
+
+  if (sign == '-') {
+    res *= -1;
+  }
+
+  // возвращение результата
+
+  if (pattern.lengh == 'L') {
+    *(long double*)dest = res;
+  } else {
+    *(float*)dest = (float)res;
+  }
+
+  return 0;
+}
+
+int scanFloat(const char** str, struct Pattern pattern, void* dest) {
+  char sign = '+';
+  // обработка знакового ввода
+  if (s21_strspn(*str, "+-")) {
+    // если считали только знак
+    if (pattern.width == 1) {
+      return 1;
+    }
+    pattern.width -= 1;
+    sign = **str;
+    (*str)++;
+  }
+
+  // сколько символов нужно считать
+  int len = s21_strspn(*str, "0123456789");
+  if (len == 0) {
+    return 1;
+  }
+
+  // считывание целой части
+  struct Pattern forScan = {0, 0, pattern.width, 'l', 'd'};
+  long double res;
+  long int_part;
+  long dec_part = 0;
+  scanInt(str, forScan, &int_part);
+  // printf("asas%ld", rrr);
+  res = int_part;
+
+  // считывание десятичной части
+  if (**str == '.' && (pattern.width > len || pattern.width <= 0)) {
+    pattern.width = pattern.width - len - 1;
+    (*str)++;
+    
+    if (pattern.width != 0) {
+      int len = s21_strspn(*str, "0123456789");
+      if (pattern.width > 0 && pattern.width < len) {
+        len = pattern.width;
+      }
+      forScan.width = pattern.width;
+      scanInt(str, forScan, &dec_part);
+      res += dec_part * pow(10, -1 * len);
+    }
+  }
+
+  if (sign == '-') {
+    res *= -1;
+  }
+
+  // возвращение результата
+
+  if (pattern.lengh == 'L') {
+    *(long double*)dest = res;
+  } else {
+    *(double*)dest = (double)res;
   }
 
   return 0;
