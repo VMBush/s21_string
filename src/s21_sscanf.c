@@ -31,6 +31,9 @@ int s21_sscanf(const char* str, const char* format, ...) {
   const char* str_start = str;
   for (int i = 0; i < patterns.size && err == 0; i++) {
     scanPattern(&str, patterns.data[i], dest, &succ_cntr, str_start, &err);
+    if (!patterns.data[i].isChar && !patterns.data[i].skipping) {
+      va_arg(dest, void*);
+    }
   }
 
   va_end(dest);
@@ -117,7 +120,7 @@ void scanPattern(const char** str, struct Pattern pattern, va_list dest,
       (*str)++;
     }
     // спецификаторы после пробела
-    switch (pattern.sym) {  // cis
+    switch (pattern.sym) {  // *s
       case '%':
         if (**str == '%') {
           *str++;
@@ -148,6 +151,14 @@ void scanPattern(const char** str, struct Pattern pattern, va_list dest,
       case 'g':
       case 'G':
         *err = scanFloat_Sci(str, pattern, va_arg(dest, void*));
+        *succ_cntr += 1 - *err;
+        break;
+      case 'i':
+        *err = scanMultiDec(str, pattern, va_arg(dest, void*));
+        *succ_cntr += 1 - *err;
+        break;
+      case 'c':
+        *err = scanChar(str, pattern, va_arg(dest, void*));
         *succ_cntr += 1 - *err;
         break;
     }
@@ -211,6 +222,50 @@ int scanInt(const char** str, struct Pattern pattern, void* dest) {
   return 0;
 }
 
+int scanMultiDec(const char** str, struct Pattern pattern, void* dest) {
+  char sign = '+';
+  // обработка знакового ввода
+  if (s21_strspn(*str, "+-")) {
+    // если считали только знак
+    if (pattern.width == 1) {
+      return 1;
+    }
+    pattern.width -= 1;
+    sign = **str;
+    (*str)++;
+  }
+
+  long int res = 0;
+  int err = 0;
+  struct Pattern forScan = {0, 0, pattern.width, 'l', 'd'};
+
+  if (**str == '0') {
+    if (*(*str + 1) == 'x') {
+      forScan.sym = 'x';
+      err = scanHex(str, forScan, &res);
+    } else {
+      forScan.sym = 'o';
+      err = scanOct(str, forScan, &res);
+    }
+  } else {
+    forScan.sym = 'd';
+    err = scanInt(str, forScan, &res);
+  }
+
+  if (sign == '-') {
+    res *= -1;
+  }
+
+  if (pattern.lengh == 'h') {
+    *(short*)dest = (short)res;
+  } else if (pattern.lengh == 'l') {
+    *(long*)dest = res;
+  } else {
+    *(int*)dest = (int)res;
+  }
+
+  return err;
+}
 // Если считываем хекс, записываем инт, если указатель, то преобразуем инт в
 // (void*)
 int scanHex(const char** str, struct Pattern pattern, void* dest) {
@@ -436,7 +491,7 @@ int scanFloat(const char** str, struct Pattern pattern, void* dest) {
   if (**str == '.' && (pattern.width > len || pattern.width <= 0)) {
     pattern.width = pattern.width - len - 1;
     (*str)++;
-    
+
     if (pattern.width != 0) {
       int len = s21_strspn(*str, "0123456789");
       if (pattern.width > 0 && pattern.width < len) {
@@ -462,3 +517,20 @@ int scanFloat(const char** str, struct Pattern pattern, void* dest) {
 
   return 0;
 }
+
+int scanChar(const char** str, struct Pattern pattern, void* dest) {
+  if (**str == '\0') {
+    return 1;
+  }
+  wchar_t res = **str;
+  (*str)++;
+
+  if (pattern.lengh == 'l') {
+    *(wchar_t*)dest = res;
+  } else {
+    *(char*)dest = (char)res;
+  }
+  return 0;
+}
+
+int scanStr(const char** str, struct Pattern pattern, void* dest) {}

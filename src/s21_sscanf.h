@@ -25,6 +25,8 @@ void scanPattern(const char** str, struct Pattern pattern, va_list dest,
 
 int scanInt(const char** str, struct Pattern pattern, void* dest);
 
+int scanMultiDec(const char** str, struct Pattern pattern, void* dest);
+
 int scanHex(const char** str, struct Pattern pattern, void* dest);
 
 int scanOct(const char** str, struct Pattern pattern, void* dest);
@@ -32,3 +34,5 @@ int scanOct(const char** str, struct Pattern pattern, void* dest);
 int scanFloat_Sci(const char** str, struct Pattern pattern, void* dest);
 
 int scanFloat(const char** str, struct Pattern pattern, void* dest);
+
+int scanChar(const char** str, struct Pattern pattern, void* dest);
