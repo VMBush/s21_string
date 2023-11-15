@@ -36,3 +36,5 @@ int scanFloat_Sci(const char** str, struct Pattern pattern, void* dest);
 int scanFloat(const char** str, struct Pattern pattern, void* dest);
 
 int scanChar(const char** str, struct Pattern pattern, void* dest);
+
+int scanStr(const char** str, struct Pattern pattern, void* dest);

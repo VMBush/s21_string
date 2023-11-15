@@ -35,7 +35,9 @@ int s21_sscanf(const char* str, const char* format, ...) {
       va_arg(dest, void*);
     }
   }
-
+  if (err == 1 && succ_cntr == 0) {
+    succ_cntr--;
+  }
   va_end(dest);
   patternVecDel(patterns);
   return succ_cntr;
@@ -70,7 +72,7 @@ void getPatterns(struct PatternVec* patterns, const char* format) {
         scanInt(&format, forScan, &new.width);
       }
       // обрабатываем длину
-      if (s21_strchr("hIL", *format)) {
+      if (s21_strchr("hlL", *format)) {
         new.lengh = *format;
         format++;
       }
@@ -112,15 +114,26 @@ void scanPattern(const char** str, struct Pattern pattern, va_list dest,
   } else {
     // спецификаторы до пробела
     if (pattern.sym == 'n') {
-      *va_arg(dest, int*) = *str - str_start;
+      if (!pattern.skipping) {
+        *va_arg(dest, int*) = *str - str_start;
+      }
       //(*succ_cntr)++; Нет
+      return;
+    }
+
+    if (pattern.sym == 'c') {
+      *err = scanChar(str, pattern, va_arg(dest, void*));
+      if (!pattern.skipping) {
+        *succ_cntr += 1 - *err;
+      }
+      return;
     }
 
     while (**str == ' ') {
       (*str)++;
     }
     // спецификаторы после пробела
-    switch (pattern.sym) {  // *s
+    switch (pattern.sym) {  // *
       case '%':
         if (**str == '%') {
           *str++;
@@ -131,19 +144,25 @@ void scanPattern(const char** str, struct Pattern pattern, va_list dest,
       case 'd':
       case 'u':
         *err = scanInt(str, pattern, va_arg(dest, void*));
-        *succ_cntr += 1 - *err;
+        if (!pattern.skipping) {
+          *succ_cntr += 1 - *err;
+        }
         break;
 
       case 'p':
       case 'x':
       case 'X':
         *err = scanHex(str, pattern, va_arg(dest, void*));
-        *succ_cntr += 1 - *err;
+        if (!pattern.skipping) {
+          *succ_cntr += 1 - *err;
+        }
         break;
 
       case 'o':
         *err = scanOct(str, pattern, va_arg(dest, void*));
-        *succ_cntr += 1 - *err;
+        if (!pattern.skipping) {
+          *succ_cntr += 1 - *err;
+        }
         break;
       case 'e':
       case 'E':
@@ -151,16 +170,22 @@ void scanPattern(const char** str, struct Pattern pattern, va_list dest,
       case 'g':
       case 'G':
         *err = scanFloat_Sci(str, pattern, va_arg(dest, void*));
-        *succ_cntr += 1 - *err;
+        if (!pattern.skipping) {
+          *succ_cntr += 1 - *err;
+        }
         break;
       case 'i':
         *err = scanMultiDec(str, pattern, va_arg(dest, void*));
-        *succ_cntr += 1 - *err;
+        if (!pattern.skipping) {
+          *succ_cntr += 1 - *err;
+        }
         break;
-      case 'c':
-        *err = scanChar(str, pattern, va_arg(dest, void*));
-        *succ_cntr += 1 - *err;
-        break;
+
+      case 's':
+        *err = scanStr(str, pattern, va_arg(dest, void*));
+        if (!pattern.skipping) {
+          *succ_cntr += 1 - *err;
+        }
     }
   }
 }
@@ -201,21 +226,23 @@ int scanInt(const char** str, struct Pattern pattern, void* dest) {
   }
 
   // возвращение результата
-  if (pattern.sym == 'd') {
-    if (pattern.lengh == 'h') {
-      *(short*)dest = (short)res;
-    } else if (pattern.lengh == 'l') {
-      *(long*)dest = res;
-    } else {
-      *(int*)dest = (int)res;
-    }
-  } else if (pattern.sym == 'u') {
-    if (pattern.lengh == 'h') {
-      *(unsigned short*)dest = (unsigned short)res;
-    } else if (pattern.lengh == 'l') {
-      *(unsigned long*)dest = res;
-    } else {
-      *(unsigned int*)dest = (unsigned int)res;
+  if (!pattern.skipping) {
+    if (pattern.sym == 'd') {
+      if (pattern.lengh == 'h') {
+        *(short*)dest = (short)res;
+      } else if (pattern.lengh == 'l') {
+        *(long*)dest = res;
+      } else {
+        *(int*)dest = (int)res;
+      }
+    } else if (pattern.sym == 'u') {
+      if (pattern.lengh == 'h') {
+        *(unsigned short*)dest = (unsigned short)res;
+      } else if (pattern.lengh == 'l') {
+        *(unsigned long*)dest = res;
+      } else {
+        *(unsigned int*)dest = (unsigned int)res;
+      }
     }
   }
 
@@ -255,15 +282,15 @@ int scanMultiDec(const char** str, struct Pattern pattern, void* dest) {
   if (sign == '-') {
     res *= -1;
   }
-
-  if (pattern.lengh == 'h') {
-    *(short*)dest = (short)res;
-  } else if (pattern.lengh == 'l') {
-    *(long*)dest = res;
-  } else {
-    *(int*)dest = (int)res;
+  if (!pattern.skipping) {
+    if (pattern.lengh == 'h') {
+      *(short*)dest = (short)res;
+    } else if (pattern.lengh == 'l') {
+      *(long*)dest = res;
+    } else {
+      *(int*)dest = (int)res;
+    }
   }
-
   return err;
 }
 // Если считываем хекс, записываем инт, если указатель, то преобразуем инт в
@@ -339,15 +366,17 @@ int scanHex(const char** str, struct Pattern pattern, void* dest) {
   }
 
   // возвращение результата
-  if (pattern.sym == 'p') {
-    *(void**)dest = (void*)res;
-  } else {  // x или X
-    if (pattern.lengh == 'h') {
-      *(unsigned short*)dest = (unsigned short)res;
-    } else if (pattern.lengh == 'l') {
-      *(unsigned long*)dest = res;
-    } else {
-      *(unsigned int*)dest = (unsigned int)res;
+  if (!pattern.skipping) {
+    if (pattern.sym == 'p') {
+      *(void**)dest = (void*)res;
+    } else {  // x или X
+      if (pattern.lengh == 'h') {
+        *(unsigned short*)dest = (unsigned short)res;
+      } else if (pattern.lengh == 'l') {
+        *(unsigned long*)dest = res;
+      } else {
+        *(unsigned int*)dest = (unsigned int)res;
+      }
     }
   }
 
@@ -392,12 +421,14 @@ int scanOct(const char** str, struct Pattern pattern, void* dest) {
   }
 
   // возвращение результата
-  if (pattern.lengh == 'h') {
-    *(unsigned short*)dest = (unsigned short)res;
-  } else if (pattern.lengh == 'l') {
-    *(unsigned long*)dest = res;
-  } else {
-    *(unsigned int*)dest = (unsigned int)res;
+  if (!pattern.skipping) {
+    if (pattern.lengh == 'h') {
+      *(unsigned short*)dest = (unsigned short)res;
+    } else if (pattern.lengh == 'l') {
+      *(unsigned long*)dest = res;
+    } else {
+      *(unsigned int*)dest = (unsigned int)res;
+    }
   }
 
   return 0;
@@ -449,13 +480,13 @@ int scanFloat_Sci(const char** str, struct Pattern pattern, void* dest) {
   }
 
   // возвращение результата
-
-  if (pattern.lengh == 'L') {
-    *(long double*)dest = res;
-  } else {
-    *(float*)dest = (float)res;
+  if (!pattern.skipping) {
+    if (pattern.lengh == 'L') {
+      *(long double*)dest = res;
+    } else {
+      *(float*)dest = (float)res;
+    }
   }
-
   return 0;
 }
 
@@ -508,13 +539,13 @@ int scanFloat(const char** str, struct Pattern pattern, void* dest) {
   }
 
   // возвращение результата
-
-  if (pattern.lengh == 'L') {
-    *(long double*)dest = res;
-  } else {
-    *(double*)dest = (double)res;
+  if (!pattern.skipping) {
+    if (pattern.lengh == 'L') {
+      *(long double*)dest = res;
+    } else {
+      *(double*)dest = (double)res;
+    }
   }
-
   return 0;
 }
 
@@ -525,12 +556,40 @@ int scanChar(const char** str, struct Pattern pattern, void* dest) {
   wchar_t res = **str;
   (*str)++;
 
-  if (pattern.lengh == 'l') {
-    *(wchar_t*)dest = res;
-  } else {
-    *(char*)dest = (char)res;
+  if (!pattern.skipping) {
+    if (pattern.lengh == 'l') {
+      *(wchar_t*)dest = res;
+    } else {
+      *(char*)dest = (char)res;
+    }
   }
   return 0;
 }
 
-int scanStr(const char** str, struct Pattern pattern, void* dest) {}
+int scanStr(const char** str, struct Pattern pattern, void* dest) {
+  if (**str == '\0') {
+    return 1;
+  }
+  wchar_t* wres = (wchar_t*)dest;
+  char* res = (char*)dest;
+  int len = s21_strcspn(*str, " \n");
+
+  if (!pattern.skipping) {
+    for (int i = 0; i < len; i++) {
+      if (pattern.lengh == 'l') {
+        wres[i] = (*str)[i];
+      } else {
+        res[i] = (*str)[i];
+      }
+    }
+
+    if (pattern.lengh == 'l') {
+      wres[len] = '\0';
+    } else {
+      res[len] = '\0';
+    }
+  }
+
+  *str += len;
+  return 0;
+}
