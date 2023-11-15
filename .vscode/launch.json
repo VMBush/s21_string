@@ -1,63 +1,88 @@
 {
-  // Используйте IntelliSense, чтобы узнать о возможных атрибутах.
-  // Наведите указатель мыши, чтобы просмотреть описания существующих атрибутов.
-  // Для получения дополнительной информации посетите: https://go.microsoft.com/fwlink/?linkid=830387
-  "version": "0.2.0",
-  "configurations": [
-    {
-      // MacOS
-      "name": "Launch Program(lldb)",
-      "type": "cppdbg",
-      "request": "launch",
-      "program": "${workspaceRoot}/src/a.out",
-      "args": [],
-      "stopAtEntry": false,
-      "cwd": "${workspaceRoot}",
-      "environment": [],
-      "externalConsole": true,
-      "MIMode": "lldb"
-    },
-    {
-      "name": "Launch Program (GDB)",
-      "type": "cppdbg",
-      "request": "launch",
-      "program": "${workspaceFolder}/src/a.exe", // Имя вашего исполняемого файла
-      "args": [],
-      "stopAtEntry": false,
-      "cwd": "${workspaceFolder}",
-      "environment": [],
-      "externalConsole": true,
-      "MIMode": "gdb",
-      "setupCommands": [
+    "version": "0.2.0",
+    "configurations": [
         {
-          "description": "Enable pretty-printing for gdb",
-          "text": "-enable-pretty-printing",
-          "ignoreFailures": true
-        }
-      ],
-      "preLaunchTask": "compile_all", // Имя вашей задачи компиляции
-
-      "miDebuggerPath": "D:/SOFT/gcc/bin/gdb.exe" // Укажите путь к вашему GDB
-    },
-    {
-      // Linux
-      "name": "(gdb) Launch",
-      "type": "cppdbg",
-      "request": "launch",
-      "program": "${workspaceRoot}/a.out",
-      "args": ["4", "3", "2", "1"],
-      "stopAtEntry": false,
-      "cwd": "${workspaceRoot}",
-      "environment": [],
-      "externalConsole": true,
-      "MIMode": "gdb",
-      "setupCommands": [
+            "name": "Launch Program(lldb)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/src/a.out",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceRoot}",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "lldb"
+        },
         {
-          "description": "Enable pretty-printing for gdb",
-          "text": "-enable-pretty-printing",
-          "ignoreFailures": true
+            "name": "Launch Program (GDB)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/a.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "miDebuggerPath": "D:/SOFT/Msys2/mingw64/bin/gdb.exe",
+            "preLaunchTask": "win",
+        },
+        {
+            "name": "(gdb) Launch",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceRoot}/a.out",
+            "args": [
+                "4",
+                "3",
+                "2",
+                "1"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceRoot}",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "C/C++: gcc.exe сборка и отладка активного файла",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}\\a.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "D:/SOFT/Msys2/mingw64/bin",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "D:/SOFT/gcc/bin/gdb.exe",
+            "setupCommands": [
+                {
+                    "description": "Включить автоматическое форматирование для gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "Задать для варианта приложения дизассемблирования значение Intel",
+                    "text": "-gdb-set disassembly-flavor intel",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "win"
         }
-      ]
-    }
-  ]
-}
+    ]
+  }
